@@ -9,8 +9,9 @@ const playerFactory = (name) => {
     console.log(this.name + " wins");
   };
   let score = 0;
+  let winner = "no";
 
-  return { name, score, win };
+  return { name, score, win, winner };
 };
 
 const playerOne = playerFactory("Player 1");
@@ -31,24 +32,27 @@ const gameGrid = (() => {
 const gameFlow = (() => {
   let remainingSquares = 9;
   let mark = "x";
+
+  //Unbedingt testen ob ich remainingSquares und mark nach gameBoard auslagern kann,
+  //um sie von außen anzusteuern.
+
   const changeMark = function (grid) {
     let i = grid.target.id;
     if (mark === "x" && grid.target.textContent === "") {
       grid.target.textContent = "x";
       gameBoard.gameState[i] = "x";
       mark = "o";
-      checkWinner();
       remainingSquares -= 1;
     } else if (mark === "o" && grid.target.textContent === "") {
       grid.target.textContent = "o";
       gameBoard.gameState[i] = "o";
       mark = "x";
-      checkWinner();
       remainingSquares -= 1;
     }
     if (remainingSquares === 0) {
       console.log("Its a tie!");
     }
+    checkWinner();
   };
   container.addEventListener("click", changeMark);
 })();
@@ -71,15 +75,43 @@ function checkWinner() {
       gameBoard.gameState[square[1]] === "x" &&
       gameBoard.gameState[square[2]] === "x"
     ) {
-      console.log("Player 1 is the winner!");
+      playerOne.winner = "yes";
+      declareWinner();
     } else if (
       gameBoard.gameState[square[0]] === "o" &&
       gameBoard.gameState[square[1]] === "o" &&
       gameBoard.gameState[square[2]] === "o"
     ) {
-      console.log("Player 2 is the winner!");
+      playerTwo.winner = "yes";
+      declareWinner();
     }
   });
+}
+
+function declareWinner() {
+  if (playerOne.winner === "yes") {
+    console.log("Player 1 is the winner!");
+  } else if (playerTwo.winner === "yes") {
+    console.log("Player 2 is the winner!");
+  }
+  gameBoard.gameState = ["", "", "", "", "", "", "", "", ""];
+  wipeGrid();
+  playerOne.winner = "no";
+  playerTwo.winner = "no";
+  gameFlow.remainingSquares = 9;
+}
+
+function wipeGrid() {
+  while (container.firstChild) {
+    container.firstChild.remove();
+  }
+  for (i = 0; i < gameBoard.gameState.length; i++) {
+    grid = document.createElement("div");
+    grid.className = "grid";
+    grid.id = i;
+    container.appendChild(grid);
+    grid.textContent = gameBoard.gameState[i];
+  }
 }
 
 //Original winning Function, works but kinda dumb.
