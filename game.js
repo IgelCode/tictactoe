@@ -1,3 +1,4 @@
+//Selectors...not hard to guess
 const selectors = {
   resetbtn: document.getElementById("resetbtn"),
   lefttext: document.getElementById("lefttext"),
@@ -7,13 +8,16 @@ const selectors = {
   leftname: document.getElementById("leftname"),
   rightname: document.getElementById("rightname"),
   turn: document.getElementById("turn"),
+  toggleai: document.getElementById("toggleai"),
 };
+
+//Toggle the AI, any better ideas to get this into an object?
 let ai = "off";
 function aitoggle() {
   if (ai === "on") {
     ai = "off";
     toggleai.textContent = "Play vs AI (off)";
-    leftname.textContent = "Player 2 - [edit]";
+    leftname.textContent = "Player 2";
   } else {
     ai = "on";
     toggleai.textContent = "Play vs AI (on)";
@@ -22,6 +26,7 @@ function aitoggle() {
 selectors.turn.textContent = "It is your turn: Player 1";
 toggleai.addEventListener("click", aitoggle);
 
+//Edit the Playernames Module
 const editName = (() => {
   const changeName = function () {
     selectors.leftname.textContent = prompt(
@@ -30,25 +35,28 @@ const editName = (() => {
 
     if (selectors.leftname.textContent === "") {
       alert("Must have a name!");
-      selectors.leftname.textContent = "Player 1 - [edit]";
+      selectors.leftname.textContent = "Player 1";
       return;
     }
     playerOne.name = selectors.leftname.textContent;
+    yourTurn();
 
     selectors.rightname.textContent = prompt(
       "Please enter the name of Player 2"
     );
     if (selectors.rightname.textContent === "") {
       alert("Must have a name!");
-      selectors.rightname.textContent = "Player 2 - [edit]";
+      selectors.rightname.textContent = "Player 2";
       return;
     }
     playerTwo.name = selectors.rightname.textContent;
+    yourTurn();
   };
   selectors.leftname.addEventListener("click", changeName);
   selectors.rightname.addEventListener("click", changeName);
 })();
 
+//Making the Players
 const playerFactory = (name) => {
   const win = function () {
     console.log(this.name + " wins");
@@ -58,10 +66,10 @@ const playerFactory = (name) => {
 
   return { name, score, win, winner };
 };
-
 const playerOne = playerFactory("Player 1");
 const playerTwo = playerFactory("Player 2");
 
+//The Board with its beginning state, a wipe method (soft), a reset method (hard)
 const gameBoard = (() => {
   let gameState = ["", "", "", "", "", "", "", "", ""];
   let remainingSquares = 9;
@@ -112,16 +120,17 @@ const gameBoard = (() => {
     selectors.rightscore.textContent = "Score: 0";
     playerTwo.name = "Player 2";
     playerOne.name = "Player 1";
-    selectors.leftname.textContent = "Player 1 - [edit]";
-    selectors.rightname.textContent = "Player 2 - [edit]";
+    selectors.leftname.textContent = "Player 1";
+    selectors.rightname.textContent = "Player 2";
     selectors.turn.textContent = "It is your turn: Player 1";
     ai = "off";
+    toggleai.textContent = "Play vs AI (off)";
   };
-
   return { gameState, mark, remainingSquares, wipeGrid, resetAll };
 })();
 resetbtn.addEventListener("click", gameBoard.resetAll);
 
+//Deciding whos turn it is
 const yourTurn = () => {
   if (gameBoard.mark === "x") {
     selectors.turn.textContent = "It is your turn: " + playerOne.name;
@@ -130,6 +139,7 @@ const yourTurn = () => {
   }
 };
 
+//Making the Grid of the Game
 const gameGrid = (() => {
   let grid;
   const container = document.getElementById("container");
@@ -142,6 +152,7 @@ const gameGrid = (() => {
   }
 })();
 
+//The flow of the game, deciding if AI is playing
 const gameFlow = (() => {
   const changeMark = function (grid) {
     let i = grid.target.id;
@@ -152,9 +163,10 @@ const gameFlow = (() => {
       gameBoard.remainingSquares -= 1;
       selectors.lefttext.textContent = "";
       selectors.righttext.textContent = "";
-      const toggleai = document.getElementById("toggleai");
+
       if (ai === "on") {
         simpleAI();
+        console.log(gameBoard.gameState);
       }
       //AI BUTTON EVLISTENR
       //simpleAI();
@@ -177,6 +189,7 @@ const gameFlow = (() => {
   container.addEventListener("click", changeMark);
 })();
 
+//Checking if someone has won
 const checkWinner = () => {
   const winningStates = [
     [0, 1, 2],
@@ -220,6 +233,7 @@ const checkWinner = () => {
   });
 };
 
+//Random AI
 const simpleAI = () => {
   rightname.textContent = "AI Player";
   if (gameBoard.mark === "o") {
