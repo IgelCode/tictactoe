@@ -9,23 +9,18 @@ const selectors = {
   turn: document.getElementById("turn"),
 };
 
-const yourTurn = () => {
-  if (gameBoard.mark === "x") {
-    selectors.turn.textContent = "It is your turn: Player 1 ";
-  } else if (gameBoard.mark === "o") {
-    selectors.turn.textContent = "It is your turn: Player 2 ";
-  }
-};
-
 const editName = (() => {
   const changeName = function () {
     selectors.leftname.textContent = prompt(
       "Please enter the name of Player 1"
     );
+
     if (selectors.leftname.textContent === "") {
       alert("Must have a name!");
       selectors.leftname.textContent = "Player 1 - [edit]";
+      return;
     }
+    playerOne.name = selectors.leftname.textContent;
 
     selectors.rightname.textContent = prompt(
       "Please enter the name of Player 2"
@@ -33,7 +28,9 @@ const editName = (() => {
     if (selectors.rightname.textContent === "") {
       alert("Must have a name!");
       selectors.rightname.textContent = "Player 2 - [edit]";
+      return;
     }
+    playerTwo.name = selectors.rightname.textContent;
   };
   selectors.leftname.addEventListener("click", changeName);
   selectors.rightname.addEventListener("click", changeName);
@@ -97,9 +94,23 @@ const gameBoard = (() => {
     selectors.righttext.textContent = "";
     playerOne.score = 0;
     playerTwo.score = 0;
+    selectors.leftscore.textContent = "Score: 0";
+    selectors.rightscore.textContent = "Score: 0";
+    playerTwo.name = "Player 2";
+    playerOne.name = "Player 1";
+    selectors.leftname.textContent = "Player 1 - [edit]";
+    selectors.rightname.textContent = "Player 2 - [edit]";
   };
 
   return { gameState, mark, remainingSquares, wipeGrid, resetAll };
+})();
+
+const yourTurn = (() => {
+  if (gameBoard.mark === "x") {
+    selectors.turn.textContent = "It is your turn: " + playerOne.name;
+  } else if (gameBoard.mark === "o") {
+    selectors.turn.textContent = "It is your turn: " + playerTwo.name;
+  }
 })();
 
 resetbtn.addEventListener("click", gameBoard.resetAll);
@@ -126,6 +137,7 @@ const gameFlow = (() => {
       gameBoard.remainingSquares -= 1;
       selectors.lefttext.textContent = "";
       selectors.righttext.textContent = "";
+      //AI BUTTON EVLISTENR
       simpleAI();
     } else if (gameBoard.mark === "o" && grid.target.textContent === "") {
       grid.target.textContent = "o";
@@ -194,9 +206,7 @@ const simpleAI = () => {
     const grid = document.getElementsByClassName("grid");
     let i = Math.floor(Math.random() * gameBoard.gameState.length);
     if (gameBoard.remainingSquares === 0) {
-      selectors.lefttext.textContent = "Its a tie!";
-      selectors.righttext.textContent = "Its a tie!";
-      gameBoard.wipeGrid();
+      checkWinner();
     } else if (grid[i].textContent === "" && gameBoard.gameState[i] === "") {
       gameBoard.gameState[i] = "o";
       grid[i].textContent = "o";
@@ -205,7 +215,6 @@ const simpleAI = () => {
       simpleAI();
     }
     gameBoard.mark = "x";
-    console.log(gameBoard.gameState);
     return;
   } else {
     return;
