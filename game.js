@@ -249,6 +249,7 @@ const simpleAI = () => {
       checkWinner();
     } else if (grid[i].textContent === "" && gameBoard.gameState[i] === "") {
       gameBoard.gameState[i] = "o";
+      grid[i].style.color = "green";
       grid[i].textContent = "o";
       gameBoard.remainingSquares -= 1;
     } else {
