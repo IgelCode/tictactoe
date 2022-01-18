@@ -112,8 +112,8 @@ const gameBoard = (() => {
     playerTwo.winner = "no";
     gameBoard.remainingSquares = 9;
     gameBoard.mark = "x";
-    selectors.lefttext.textContent = "";
-    selectors.righttext.textContent = "";
+    selectors.lefttext.textContent = "Win or lose?";
+    selectors.righttext.textContent = "Win or lose?";
     playerOne.score = 0;
     playerTwo.score = 0;
     selectors.leftscore.textContent = "Score: 0";
@@ -203,11 +203,13 @@ const checkWinner = () => {
   ];
   const declareWinner = function () {
     if (playerOne.winner === "yes") {
-      selectors.lefttext.textContent = "You won this round!";
+      selectors.lefttext.textContent =
+        "This round goes to " + playerOne.name + "!";
       playerOne.score += 1;
       selectors.leftscore.textContent = "Score: " + playerOne.score;
     } else if (playerTwo.winner === "yes") {
-      selectors.righttext.textContent = "You won this round!";
+      selectors.righttext.textContent =
+        "This round goes to " + playerTwo.name + "!";
       playerTwo.score += 1;
       selectors.rightscore.textContent = "Score: " + playerTwo.score;
     }

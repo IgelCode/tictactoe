@@ -72,3 +72,9 @@ li {
   font-weight: 400;
   text-decoration: underline;
 }
+#righttext,
+#lefttext {
+  font-size: 20px;
+  font-weight: 400;
+  color: rgb(70, 64, 64);
+}
