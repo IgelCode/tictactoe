@@ -236,6 +236,8 @@ const checkWinner = () => {
 //Random AI
 const simpleAI = () => {
   rightname.textContent = "AI Player";
+  righttext.textContent = `AI says: "What a strange game. 
+                            The only winning move is not to play."`;
   if (gameBoard.mark === "o") {
     const grid = document.getElementsByClassName("grid");
     let i = Math.floor(Math.random() * gameBoard.gameState.length);
