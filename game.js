@@ -1,10 +1,3 @@
-const gameBoard = (() => {
-  let gameState = ["", "", "", "", "", "", "", "", ""];
-  let remainingSquares = 9;
-  let mark = "x";
-  return { gameState, mark, remainingSquares };
-})();
-
 const playerFactory = (name) => {
   const win = function () {
     console.log(this.name + " wins");
@@ -17,6 +10,35 @@ const playerFactory = (name) => {
 
 const playerOne = playerFactory("Player 1");
 const playerTwo = playerFactory("Player 2");
+
+const gameBoard = (() => {
+  let gameState = ["", "", "", "", "", "", "", "", ""];
+  let remainingSquares = 9;
+  let mark = "x";
+
+  const wipeGrid = function () {
+    while (container.firstChild) {
+      container.firstChild.remove();
+    }
+    gameBoard.gameState = ["", "", "", "", "", "", "", "", ""];
+    for (i = 0; i < gameBoard.gameState.length; i++) {
+      grid = document.createElement("div");
+      grid.className = "grid";
+      grid.id = i;
+      container.appendChild(grid);
+      grid.textContent = gameBoard.gameState[i];
+    }
+    playerOne.winner = "no";
+    playerTwo.winner = "no";
+    gameBoard.remainingSquares = 9;
+    gameBoard.mark = "x";
+  };
+
+  return { gameState, mark, remainingSquares, wipeGrid };
+})();
+
+const resetbtn = document.getElementById("resetbtn");
+resetbtn.addEventListener("click", gameBoard.wipeGrid);
 
 const gameGrid = (() => {
   let grid;
@@ -31,9 +53,6 @@ const gameGrid = (() => {
 })();
 
 const gameFlow = (() => {
-  //Unbedingt testen ob ich remainingSquares und mark nach gameBoard auslagern kann,
-  //um sie von außen anzusteuern.
-
   const changeMark = function (grid) {
     let i = grid.target.id;
     if (gameBoard.mark === "x" && grid.target.textContent === "") {
@@ -49,24 +68,33 @@ const gameFlow = (() => {
     }
     if (gameBoard.remainingSquares === 0) {
       console.log("Its a tie!");
+      wipeGrid();
     }
     checkWinner();
   };
   container.addEventListener("click", changeMark);
 })();
 
-const winningStates = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-];
+const checkWinner = () => {
+  const winningStates = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  const declareWinner = function () {
+    if (playerOne.winner === "yes") {
+      console.log("Player 1 is the winner!");
+    } else if (playerTwo.winner === "yes") {
+      console.log("Player 2 is the winner!");
+    }
+    gameBoard.wipeGrid();
+  };
 
-function checkWinner() {
   winningStates.forEach((square) => {
     if (
       gameBoard.gameState[square[0]] === "x" &&
@@ -84,34 +112,7 @@ function checkWinner() {
       declareWinner();
     }
   });
-}
-
-function declareWinner() {
-  if (playerOne.winner === "yes") {
-    console.log("Player 1 is the winner!");
-  } else if (playerTwo.winner === "yes") {
-    console.log("Player 2 is the winner!");
-  }
-  gameBoard.gameState = ["", "", "", "", "", "", "", "", ""];
-  wipeGrid();
-  playerOne.winner = "no";
-  playerTwo.winner = "no";
-  gameBoard.remainingSquares = 9;
-  gameBoard.mark = "x";
-}
-
-function wipeGrid() {
-  while (container.firstChild) {
-    container.firstChild.remove();
-  }
-  for (i = 0; i < gameBoard.gameState.length; i++) {
-    grid = document.createElement("div");
-    grid.className = "grid";
-    grid.id = i;
-    container.appendChild(grid);
-    grid.textContent = gameBoard.gameState[i];
-  }
-}
+};
 
 //Original winning Function, works but kinda dumb.
 /*
