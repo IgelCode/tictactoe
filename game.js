@@ -8,6 +8,19 @@ const selectors = {
   rightname: document.getElementById("rightname"),
   turn: document.getElementById("turn"),
 };
+let ai = "off";
+function aitoggle() {
+  if (ai === "on") {
+    ai = "off";
+    toggleai.textContent = "Play vs AI (off)";
+    leftname.textContent = "Player 2 - [edit]";
+  } else {
+    ai = "on";
+    toggleai.textContent = "Play vs AI (on)";
+  }
+}
+selectors.turn.textContent = "It is your turn: Player 1";
+toggleai.addEventListener("click", aitoggle);
 
 const editName = (() => {
   const changeName = function () {
@@ -72,6 +85,7 @@ const gameBoard = (() => {
     playerTwo.winner = "no";
     gameBoard.remainingSquares = 9;
     gameBoard.mark = "x";
+    selectors.turn.textContent = "It is your turn: Player 1";
   };
 
   const resetAll = function () {
@@ -100,20 +114,21 @@ const gameBoard = (() => {
     playerOne.name = "Player 1";
     selectors.leftname.textContent = "Player 1 - [edit]";
     selectors.rightname.textContent = "Player 2 - [edit]";
+    selectors.turn.textContent = "It is your turn: Player 1";
+    ai = "off";
   };
 
   return { gameState, mark, remainingSquares, wipeGrid, resetAll };
 })();
+resetbtn.addEventListener("click", gameBoard.resetAll);
 
-const yourTurn = (() => {
+const yourTurn = () => {
   if (gameBoard.mark === "x") {
     selectors.turn.textContent = "It is your turn: " + playerOne.name;
   } else if (gameBoard.mark === "o") {
     selectors.turn.textContent = "It is your turn: " + playerTwo.name;
   }
-})();
-
-resetbtn.addEventListener("click", gameBoard.resetAll);
+};
 
 const gameGrid = (() => {
   let grid;
@@ -137,8 +152,12 @@ const gameFlow = (() => {
       gameBoard.remainingSquares -= 1;
       selectors.lefttext.textContent = "";
       selectors.righttext.textContent = "";
+      const toggleai = document.getElementById("toggleai");
+      if (ai === "on") {
+        simpleAI();
+      }
       //AI BUTTON EVLISTENR
-      simpleAI();
+      //simpleAI();
     } else if (gameBoard.mark === "o" && grid.target.textContent === "") {
       grid.target.textContent = "o";
       gameBoard.gameState[i] = "o";
@@ -152,6 +171,7 @@ const gameFlow = (() => {
       selectors.righttext.textContent = "Its a tie!";
       gameBoard.wipeGrid();
     }
+    yourTurn();
     checkWinner();
   };
   container.addEventListener("click", changeMark);

@@ -46,7 +46,8 @@ h1 {
   justify-content: space-evenly;
   padding: 50px 50px;
 }
-#resetbtn {
+#resetbtn,
+#toggleai {
   width: 100px;
   height: 50px;
   border-style: solid;
