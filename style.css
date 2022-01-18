@@ -29,6 +29,7 @@ h1 {
   overflow: auto;
   background-color: white;
   border-style: solid;
+  border-color: black;
   align-items: center;
   justify-content: center;
   font-size: 120px;
@@ -77,4 +78,14 @@ li {
   font-size: 20px;
   font-weight: 400;
   color: rgb(70, 64, 64);
+}
+#righttext {
+  color: green;
+}
+#lefttext {
+  color: red;
+}
+#rightscore,
+#leftscore {
+  font-size: 35px;
 }

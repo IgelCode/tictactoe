@@ -157,6 +157,7 @@ const gameFlow = (() => {
   const changeMark = function (grid) {
     let i = grid.target.id;
     if (gameBoard.mark === "x" && grid.target.textContent === "") {
+      grid.target.style.color = "red";
       grid.target.textContent = "x";
       gameBoard.gameState[i] = "x";
       gameBoard.mark = "o";
@@ -171,6 +172,7 @@ const gameFlow = (() => {
       //AI BUTTON EVLISTENR
       //simpleAI();
     } else if (gameBoard.mark === "o" && grid.target.textContent === "") {
+      grid.target.style.color = "green";
       grid.target.textContent = "o";
       gameBoard.gameState[i] = "o";
       gameBoard.mark = "x";
