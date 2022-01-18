@@ -1,3 +1,44 @@
+const selectors = {
+  resetbtn: document.getElementById("resetbtn"),
+  lefttext: document.getElementById("lefttext"),
+  righttext: document.getElementById("righttext"),
+  leftscore: document.getElementById("leftscore"),
+  rightscore: document.getElementById("rightscore"),
+  leftname: document.getElementById("leftname"),
+  rightname: document.getElementById("rightname"),
+  turn: document.getElementById("turn"),
+};
+
+const yourTurn = () => {
+  if (gameBoard.mark === "x") {
+    selectors.turn.textContent = "It is your turn: Player 1 ";
+  } else if (gameBoard.mark === "o") {
+    selectors.turn.textContent = "It is your turn: Player 2 ";
+  }
+};
+
+const editName = (() => {
+  const changeName = function () {
+    selectors.leftname.textContent = prompt(
+      "Please enter the name of Player 1"
+    );
+    if (selectors.leftname.textContent === "") {
+      alert("Must have a name!");
+      selectors.leftname.textContent = "Player 1 - [edit]";
+    }
+
+    selectors.rightname.textContent = prompt(
+      "Please enter the name of Player 2"
+    );
+    if (selectors.rightname.textContent === "") {
+      alert("Must have a name!");
+      selectors.rightname.textContent = "Player 2 - [edit]";
+    }
+  };
+  selectors.leftname.addEventListener("click", changeName);
+  selectors.rightname.addEventListener("click", changeName);
+})();
+
 const playerFactory = (name) => {
   const win = function () {
     console.log(this.name + " wins");
@@ -15,6 +56,8 @@ const gameBoard = (() => {
   let gameState = ["", "", "", "", "", "", "", "", ""];
   let remainingSquares = 9;
   let mark = "x";
+  selectors.leftscore.textContent = "Score: " + playerOne.score;
+  selectors.rightscore.textContent = "Score: " + playerTwo.score;
 
   const wipeGrid = function () {
     while (container.firstChild) {
@@ -34,11 +77,32 @@ const gameBoard = (() => {
     gameBoard.mark = "x";
   };
 
-  return { gameState, mark, remainingSquares, wipeGrid };
+  const resetAll = function () {
+    while (container.firstChild) {
+      container.firstChild.remove();
+    }
+    gameBoard.gameState = ["", "", "", "", "", "", "", "", ""];
+    for (i = 0; i < gameBoard.gameState.length; i++) {
+      grid = document.createElement("div");
+      grid.className = "grid";
+      grid.id = i;
+      container.appendChild(grid);
+      grid.textContent = gameBoard.gameState[i];
+    }
+    playerOne.winner = "no";
+    playerTwo.winner = "no";
+    gameBoard.remainingSquares = 9;
+    gameBoard.mark = "x";
+    selectors.lefttext.textContent = "";
+    selectors.righttext.textContent = "";
+    playerOne.score = 0;
+    playerTwo.score = 0;
+  };
+
+  return { gameState, mark, remainingSquares, wipeGrid, resetAll };
 })();
 
-const resetbtn = document.getElementById("resetbtn");
-resetbtn.addEventListener("click", gameBoard.wipeGrid);
+resetbtn.addEventListener("click", gameBoard.resetAll);
 
 const gameGrid = (() => {
   let grid;
@@ -60,15 +124,21 @@ const gameFlow = (() => {
       gameBoard.gameState[i] = "x";
       gameBoard.mark = "o";
       gameBoard.remainingSquares -= 1;
+      selectors.lefttext.textContent = "";
+      selectors.righttext.textContent = "";
+      simpleAI();
     } else if (gameBoard.mark === "o" && grid.target.textContent === "") {
       grid.target.textContent = "o";
       gameBoard.gameState[i] = "o";
       gameBoard.mark = "x";
       gameBoard.remainingSquares -= 1;
+      selectors.lefttext.textContent = "";
+      selectors.righttext.textContent = "";
     }
     if (gameBoard.remainingSquares === 0) {
-      console.log("Its a tie!");
-      wipeGrid();
+      selectors.lefttext.textContent = "Its a tie!";
+      selectors.righttext.textContent = "Its a tie!";
+      gameBoard.wipeGrid();
     }
     checkWinner();
   };
@@ -88,9 +158,13 @@ const checkWinner = () => {
   ];
   const declareWinner = function () {
     if (playerOne.winner === "yes") {
-      console.log("Player 1 is the winner!");
+      selectors.lefttext.textContent = "You won this round!";
+      playerOne.score += 1;
+      selectors.leftscore.textContent = "Score: " + playerOne.score;
     } else if (playerTwo.winner === "yes") {
-      console.log("Player 2 is the winner!");
+      selectors.righttext.textContent = "You won this round!";
+      playerTwo.score += 1;
+      selectors.rightscore.textContent = "Score: " + playerTwo.score;
     }
     gameBoard.wipeGrid();
   };
@@ -112,6 +186,30 @@ const checkWinner = () => {
       declareWinner();
     }
   });
+};
+
+const simpleAI = () => {
+  rightname.textContent = "AI Player";
+  if (gameBoard.mark === "o") {
+    const grid = document.getElementsByClassName("grid");
+    let i = Math.floor(Math.random() * gameBoard.gameState.length);
+    if (gameBoard.remainingSquares === 0) {
+      selectors.lefttext.textContent = "Its a tie!";
+      selectors.righttext.textContent = "Its a tie!";
+      gameBoard.wipeGrid();
+    } else if (grid[i].textContent === "" && gameBoard.gameState[i] === "") {
+      gameBoard.gameState[i] = "o";
+      grid[i].textContent = "o";
+      gameBoard.remainingSquares -= 1;
+    } else {
+      simpleAI();
+    }
+    gameBoard.mark = "x";
+    console.log(gameBoard.gameState);
+    return;
+  } else {
+    return;
+  }
 };
 
 //Original winning Function, works but kinda dumb.

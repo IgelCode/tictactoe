@@ -33,3 +33,29 @@ h1 {
   font-size: 120px;
   font-weight: 500;
 }
+#wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+#left,
+#right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 50px 50px;
+}
+#resetbtn {
+  width: 100px;
+  height: 50px;
+  border-style: solid;
+  border-radius: 10%;
+}
+footer {
+  bottom: 0;
+  padding: 15px;
+  background-color: whitesmoke;
+  width: 98%;
+  text-align: center;
+}
