@@ -1,7 +1,8 @@
 const gameBoard = (() => {
   let gameState = ["", "", "", "", "", "", "", "", ""];
-
-  return { gameState };
+  let remainingSquares = 9;
+  let mark = "x";
+  return { gameState, mark, remainingSquares };
 })();
 
 const playerFactory = (name) => {
@@ -30,26 +31,23 @@ const gameGrid = (() => {
 })();
 
 const gameFlow = (() => {
-  let remainingSquares = 9;
-  let mark = "x";
-
   //Unbedingt testen ob ich remainingSquares und mark nach gameBoard auslagern kann,
   //um sie von außen anzusteuern.
 
   const changeMark = function (grid) {
     let i = grid.target.id;
-    if (mark === "x" && grid.target.textContent === "") {
+    if (gameBoard.mark === "x" && grid.target.textContent === "") {
       grid.target.textContent = "x";
       gameBoard.gameState[i] = "x";
-      mark = "o";
-      remainingSquares -= 1;
-    } else if (mark === "o" && grid.target.textContent === "") {
+      gameBoard.mark = "o";
+      gameBoard.remainingSquares -= 1;
+    } else if (gameBoard.mark === "o" && grid.target.textContent === "") {
       grid.target.textContent = "o";
       gameBoard.gameState[i] = "o";
-      mark = "x";
-      remainingSquares -= 1;
+      gameBoard.mark = "x";
+      gameBoard.remainingSquares -= 1;
     }
-    if (remainingSquares === 0) {
+    if (gameBoard.remainingSquares === 0) {
       console.log("Its a tie!");
     }
     checkWinner();
@@ -98,7 +96,8 @@ function declareWinner() {
   wipeGrid();
   playerOne.winner = "no";
   playerTwo.winner = "no";
-  gameFlow.remainingSquares = 9;
+  gameBoard.remainingSquares = 9;
+  gameBoard.mark = "x";
 }
 
 function wipeGrid() {
