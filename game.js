@@ -16,10 +16,12 @@ let ai = "off";
 function aitoggle() {
   if (ai === "on") {
     ai = "off";
+    gameBoard.wipeGrid();
     toggleai.textContent = "Play vs AI (off)";
-    leftname.textContent = "Player 2";
+    rightname.textContent = "Player 2";
   } else {
     ai = "on";
+    gameBoard.wipeGrid();
     toggleai.textContent = "Play vs AI (on)";
   }
 }
